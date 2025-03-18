@@ -1,0 +1,48 @@
+// schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Category {
+  id            Int            @id @default(autoincrement())
+  name          String
+  subcategories Subcategory[]
+}
+
+model Subcategory {
+  id         Int       @id @default(autoincrement())
+  name       String
+  categoryId Int
+  category   Category  @relation(fields: [categoryId], references: [id])
+  products   Product[]
+}
+
+model Product {
+  id            Int          @id @default(autoincrement())
+  partNumber    String       @unique
+  subcategoryId Int
+  subcategory   Subcategory  @relation(fields: [subcategoryId], references: [id])
+  datasheetUrl  String?
+  attributes    Attribute[]
+}
+
+model Column {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  attributes Attribute[]
+}
+
+model Attribute {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  columnId  Int
+  column    Column  @relation(fields: [columnId], references: [id])
+  value     String?
+  @@unique([productId, columnId]) // Ensures uniqueness for product-column pairs
+}
