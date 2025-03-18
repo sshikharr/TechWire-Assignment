@@ -19,6 +19,8 @@ function App() {
     importStatus,
     handleFileChange,
     handleImport,
+    isLoadingCategories,
+    isLoadingProducts, // Destructure the new loading state
   } = useCatalogData();
 
   return (
@@ -31,26 +33,40 @@ function App() {
       />
       <div className="main-content">
         <div className="sidebar">
-          <CategoryList 
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategorySelect={setSelectedCategory}
-          />
-          {selectedCategory && (
-            <SubcategoryList
-              subcategories={subcategories}
-              selectedSubcategory={selectedSubcategory}
-              onSubcategorySelect={setSelectedSubcategory}
-            />
+          {isLoadingCategories ? (
+            <div className="loading">
+              <p>Loading categories...</p>
+            </div>
+          ) : (
+            <>
+              <CategoryList 
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onCategorySelect={setSelectedCategory}
+              />
+              {selectedCategory && (
+                <SubcategoryList
+                  subcategories={subcategories}
+                  selectedSubcategory={selectedSubcategory}
+                  onSubcategorySelect={setSelectedSubcategory}
+                />
+              )}
+            </>
           )}
         </div>
         <div className="product-display">
           {selectedSubcategory ? (
-            <ProductTable
-              categoryName={selectedCategory.name}
-              subcategoryName={selectedSubcategory.name}
-              products={products}
-            />
+            isLoadingProducts ? (
+              <div className="loading">
+                <p>Loading products...</p>
+              </div>
+            ) : (
+              <ProductTable
+                categoryName={selectedCategory.name}
+                subcategoryName={selectedSubcategory.name}
+                products={products}
+              />
+            )
           ) : (
             <div className="no-selection">
               <p>Select a category and subcategory to view products</p>

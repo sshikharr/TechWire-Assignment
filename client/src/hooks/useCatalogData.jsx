@@ -15,6 +15,8 @@ function useCatalogData() {
   const [products, setProducts] = useState([]);
   const [csvFile, setCsvFile] = useState(null);
   const [importStatus, setImportStatus] = useState('');
+  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(false); 
 
   useEffect(() => {
     fetchCategories();
@@ -34,10 +36,13 @@ function useCatalogData() {
 
   const fetchCategories = async () => {
     try {
+      setIsLoadingCategories(true);
       const response = await axios.get(`${API_URL}/categories`);
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
+    } finally {
+      setIsLoadingCategories(false);
     }
   };
 
@@ -54,10 +59,13 @@ function useCatalogData() {
 
   const fetchProducts = async (subcategoryId) => {
     try {
+      setIsLoadingProducts(true); // Start loading
       const response = await axios.get(`${API_URL}/subcategories/${subcategoryId}/products`);
       setProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
+    } finally {
+      setIsLoadingProducts(false); // End loading
     }
   };
 
@@ -100,6 +108,8 @@ function useCatalogData() {
     importStatus,
     handleFileChange,
     handleImport,
+    isLoadingCategories,
+    isLoadingProducts, 
   };
 }
 
